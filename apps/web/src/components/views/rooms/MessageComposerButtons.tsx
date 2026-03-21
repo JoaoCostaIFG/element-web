@@ -109,11 +109,11 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
             ) : (
                 emojiButton(props)
             ),
+            showStickersButton(props),
             uploadButton(), // props passed via UploadButtonContext
         ];
         moreButtons = [
             showGifButton(props),
-            showStickersButton(props),
             voiceRecordingButton(props, narrow),
             props.showPollsButton ? pollButton(room, props.relation) : null,
             showLocationButton(props, room, matrixClient),
