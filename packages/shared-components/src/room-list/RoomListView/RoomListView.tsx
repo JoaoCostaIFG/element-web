@@ -12,7 +12,7 @@ import { RoomListPrimaryFilters, type FilterId } from "../RoomListPrimaryFilters
 import { RoomListLoadingSkeleton } from "./RoomListLoadingSkeleton";
 import { RoomListEmptyStateView } from "./RoomListEmptyStateView";
 import { VirtualizedRoomListView, type RoomListViewState } from "../VirtualizedRoomListView";
-import { type Room, type RoomItemViewModel } from "../RoomListItemView";
+import { type Room, type RoomItemViewModel, type CallParticipant } from "../RoomListItemView";
 
 /**
  * Snapshot for the room list view
@@ -67,6 +67,8 @@ export interface RoomListViewProps {
     vm: RoomListViewModel;
     /** Render function for room avatar */
     renderAvatar: (room: Room) => ReactNode;
+    /** Render function for call participant avatar */
+    renderCallParticipantAvatar?: (participant: CallParticipant) => ReactNode;
     /** Optional callback for keyboard events on the room list */
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
@@ -74,7 +76,12 @@ export interface RoomListViewProps {
 /**
  * Room list view component that manages filters, loading states, empty states, and the room list.
  */
-export const RoomListView: React.FC<RoomListViewProps> = ({ vm, renderAvatar, onKeyDown }): JSX.Element => {
+export const RoomListView: React.FC<RoomListViewProps> = ({
+    vm,
+    renderAvatar,
+    renderCallParticipantAvatar,
+    onKeyDown,
+}): JSX.Element => {
     const snapshot = useViewModel(vm);
     let listBody: ReactNode;
 
@@ -83,7 +90,14 @@ export const RoomListView: React.FC<RoomListViewProps> = ({ vm, renderAvatar, on
     } else if (snapshot.isRoomListEmpty) {
         listBody = <RoomListEmptyStateView vm={vm} />;
     } else {
-        listBody = <VirtualizedRoomListView vm={vm} renderAvatar={renderAvatar} onKeyDown={onKeyDown} />;
+        listBody = (
+            <VirtualizedRoomListView
+                vm={vm}
+                renderAvatar={renderAvatar}
+                renderCallParticipantAvatar={renderCallParticipantAvatar}
+                onKeyDown={onKeyDown}
+            />
+        );
     }
 
     return (

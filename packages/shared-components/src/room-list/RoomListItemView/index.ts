@@ -12,7 +12,10 @@ export type {
     RoomItemViewModel,
     RoomListItemActions,
     RoomListItemViewProps,
+    CallParticipant,
 } from "./RoomListItemView";
+export { CallParticipantsView } from "./CallParticipantsView";
+export type { CallParticipantsViewProps } from "./CallParticipantsView";
 export { RoomListItemNotificationMenu } from "./RoomListItemNotificationMenu";
 export type { RoomListItemNotificationMenuProps } from "./RoomListItemNotificationMenu";
 export { RoomListItemMoreOptionsMenu, MoreOptionContent } from "./RoomListItemMoreOptionsMenu";

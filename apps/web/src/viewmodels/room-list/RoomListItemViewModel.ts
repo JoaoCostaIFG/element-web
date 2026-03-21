@@ -10,6 +10,7 @@ import {
     RoomNotifState,
     type RoomListItemSnapshot,
     type RoomListItemActions,
+    type CallParticipant,
 } from "@element-hq/web-shared-components";
 import { RoomEvent } from "matrix-js-sdk/src/matrix";
 import { CallType } from "matrix-js-sdk/src/webrtc/call";
@@ -37,6 +38,7 @@ import { Action } from "../../dispatcher/actions";
 import type { ViewRoomPayload } from "../../dispatcher/payloads/ViewRoomPayload";
 import PosthogTrackers from "../../PosthogTrackers";
 import { type Call, CallEvent } from "../../models/Call";
+import { mediaFromMxc } from "../../customisations/Media";
 
 interface RoomItemProps {
     room: Room;
@@ -113,14 +115,10 @@ export class RoomListItemViewModel
     };
 
     /**
-     * Handler for call participant changes. Only updates the item if the call moves between having participants and not having participants, to avoid unnecessary updates.
+     * Handler for call participant changes. Updates the item to reflect current participants.
      * @param participants The current call participants
      */
-    private onCallParticipantsChanged = (participants: Map<RoomMember, Set<string>>): void => {
-        const hasCall = Boolean(this.snapshot.current.notification.callType);
-        // There is already an active call, we don't need to update the item
-        if (hasCall && participants.size > 0) return;
-
+    private onCallParticipantsChanged = (): void => {
         this.updateItem();
     };
 
@@ -260,6 +258,23 @@ export class RoomListItemViewModel
         const callType =
             call?.callType === CallType.Voice ? "voice" : call?.callType === CallType.Video ? "video" : undefined;
 
+        // Extract call participants
+        let callParticipants: CallParticipant[] | undefined;
+        if (hasParticipantsInCall && call) {
+            callParticipants = [];
+            for (const [member] of call.participants) {
+                const mxcUrl = member.getMxcAvatarUrl();
+                const avatarUrl = mxcUrl
+                    ? mediaFromMxc(mxcUrl, client).getThumbnailOfSourceHttp(24, 24, "crop")
+                    : undefined;
+                callParticipants.push({
+                    userId: member.userId,
+                    displayName: member.name || member.userId,
+                    avatarUrl,
+                });
+            }
+        }
+
         return {
             id: room.roomId,
             room,
@@ -287,6 +302,7 @@ export class RoomListItemViewModel
             canMarkAsRead,
             canMarkAsUnread,
             roomNotifState,
+            callParticipants,
         };
     }
 

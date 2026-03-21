@@ -1,0 +1,47 @@
+/*
+ * Copyright 2026 Element Creations Ltd.
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
+ * Please see LICENSE files in the repository root for full details.
+ */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cpd-space-1x);
+    margin-top: var(--cpd-space-1x);
+}
+
+.summary {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--cpd-space-2x);
+}
+
+.summaryText {
+    color: var(--cpd-color-text-secondary);
+    font-size: var(--cpd-font-size-body-sm);
+}
+
+.membersList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cpd-space-1x);
+    padding: 0 var(--cpd-space-2x);
+}
+
+.memberItem {
+    display: flex;
+    align-items: center;
+    gap: var(--cpd-space-2x);
+    padding: var(--cpd-space-1x) var(--cpd-space-2x);
+    border-radius: var(--cpd-radius-small);
+}
+
+.memberName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--cpd-color-text-primary);
+    font-size: var(--cpd-font-size-body-sm);
+}

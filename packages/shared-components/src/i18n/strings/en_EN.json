@@ -189,5 +189,11 @@
             "screenshot": "Take a picture",
             "start_audio_stream": "Start audio stream"
         }
+    },
+    "voip": {
+        "n_people_in_call": {
+            "one": "%(count)s person in call",
+            "other": "%(count)s people in call"
+        }
     }
 }

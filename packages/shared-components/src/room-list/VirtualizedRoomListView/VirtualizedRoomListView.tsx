@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useRef, type JSX, type ReactNode } from "r
 import { type ScrollIntoViewLocation } from "react-virtuoso";
 import { isEqual } from "lodash";
 
-import { RoomListItemView, type Room } from "../RoomListItemView";
+import { RoomListItemView, type Room, type CallParticipant } from "../RoomListItemView";
 import { useViewModel } from "../../viewmodel";
 import { _t } from "../../utils/i18n";
 import { VirtualizedList, type VirtualizedListContext } from "../../utils/VirtualizedList";
@@ -48,6 +48,12 @@ export interface VirtualizedRoomListViewProps {
     renderAvatar: (room: Room) => ReactNode;
 
     /**
+     * Render function for call participant avatar
+     * @param participant - The call participant
+     */
+    renderCallParticipantAvatar?: (participant: CallParticipant) => ReactNode;
+
+    /**
      * Optional callback for keyboard key down events
      */
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -81,7 +87,12 @@ const EXTENDED_VIEWPORT_HEIGHT = 25 * ROOM_LIST_ITEM_HEIGHT;
  * <VirtualizedRoomListView vm={roomListViewModel} renderAvatar={(room) => <Avatar room={room} />} />
  * ```
  */
-export function VirtualizedRoomListView({ vm, renderAvatar, onKeyDown }: VirtualizedRoomListViewProps): JSX.Element {
+export function VirtualizedRoomListView({
+    vm,
+    renderAvatar,
+    renderCallParticipantAvatar,
+    onKeyDown,
+}: VirtualizedRoomListViewProps): JSX.Element {
     const snapshot = useViewModel(vm);
     const { roomListState, roomIds } = snapshot;
     const activeRoomIndex = roomListState.activeRoomIndex;
@@ -123,6 +134,7 @@ export function VirtualizedRoomListView({ vm, renderAvatar, onKeyDown }: Virtual
                     key={roomId}
                     vm={roomItemVM}
                     renderAvatar={renderAvatar}
+                    renderCallParticipantAvatar={renderCallParticipantAvatar}
                     isSelected={isSelected}
                     isFocused={isFocused}
                     onFocus={onFocus}
@@ -131,7 +143,7 @@ export function VirtualizedRoomListView({ vm, renderAvatar, onKeyDown }: Virtual
                 />
             );
         },
-        [activeRoomIndex, roomCount, renderAvatar, vm],
+        [activeRoomIndex, roomCount, renderAvatar, renderCallParticipantAvatar, vm],
     );
 
     /**

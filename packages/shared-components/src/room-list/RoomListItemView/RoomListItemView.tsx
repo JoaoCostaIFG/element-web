@@ -14,6 +14,7 @@ import { NotificationDecoration, type NotificationDecorationData } from "./Notif
 import { RoomListItemHoverMenu } from "./RoomListItemHoverMenu";
 import { RoomListItemContextMenu } from "./RoomListItemContextMenu";
 import { type RoomNotifState } from "./RoomNotifs";
+import { CallParticipantsView } from "./CallParticipantsView";
 import styles from "./RoomListItemView.module.css";
 import { useViewModel, type ViewModel } from "../../viewmodel";
 import { _t } from "../../utils/i18n";
@@ -38,6 +39,18 @@ function getA11yLabel(roomName: string, notification: NotificationDecorationData
     } else {
         return _t("room_list|a11y|default", { roomName });
     }
+}
+
+/**
+ * Represents a participant in an active call.
+ */
+export interface CallParticipant {
+    /** User ID of the participant */
+    userId: string;
+    /** Display name of the participant */
+    displayName: string;
+    /** Avatar URL for the participant */
+    avatarUrl?: string;
 }
 
 /**
@@ -75,6 +88,8 @@ export interface RoomListItemSnapshot {
     canMarkAsUnread: boolean;
     /** The room's notification state */
     roomNotifState: RoomNotifState;
+    /** Call participants if there's an active call in the room */
+    callParticipants?: CallParticipant[];
 }
 
 /**
@@ -125,6 +140,8 @@ export interface RoomListItemViewProps extends Omit<React.HTMLAttributes<HTMLBut
     roomCount: number;
     /** Function to render the room avatar */
     renderAvatar: (room: Room) => ReactNode;
+    /** Function to render a call participant's avatar */
+    renderCallParticipantAvatar?: (participant: CallParticipant) => ReactNode;
 }
 
 /**
@@ -139,6 +156,7 @@ export const RoomListItemView = memo(function RoomListItemView({
     roomIndex,
     roomCount,
     renderAvatar,
+    renderCallParticipantAvatar,
     ...props
 }: RoomListItemViewProps): JSX.Element {
     const ref = useRef<HTMLButtonElement>(null);
@@ -152,6 +170,8 @@ export const RoomListItemView = memo(function RoomListItemView({
 
     // Generate a11y label from notification state and room name
     const a11yLabel = getA11yLabel(item.name, item.notification);
+
+    const hasCallParticipants = item.callParticipants && item.callParticipants.length > 0;
 
     const content = (
         <Flex
@@ -185,10 +205,17 @@ export const RoomListItemView = memo(function RoomListItemView({
                         <div className={styles.roomName} title={item.name} data-testid="room-name">
                             {item.name}
                         </div>
-                        {item.messagePreview && (
-                            <Text as="div" size="sm" className={styles.ellipsis} title={item.messagePreview}>
-                                {item.messagePreview}
-                            </Text>
+                        {hasCallParticipants && renderCallParticipantAvatar && item.callParticipants ? (
+                            <CallParticipantsView
+                                participants={item.callParticipants}
+                                renderAvatar={renderCallParticipantAvatar}
+                            />
+                        ) : (
+                            item.messagePreview && (
+                                <Text as="div" size="sm" className={styles.ellipsis} title={item.messagePreview}>
+                                    {item.messagePreview}
+                                </Text>
+                            )
                         )}
                     </div>
                     {(item.showMoreOptionsMenu || item.showNotificationMenu) && (
