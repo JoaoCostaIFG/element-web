@@ -81,9 +81,24 @@ if (watch) {
 }
 
 // Compound Design Tokens CSS — copy to build/compound/ for use by audio-picker.html
-const CPD_CSS_SRC = "node_modules/@vector-im/compound-design-tokens/assets/web/css/";
 const CPD_CSS_DEST = "build/compound/";
-if (fs.existsSync(CPD_CSS_SRC)) {
+
+function findCompoundCss(): string | undefined {
+    const candidates = [
+        "node_modules/@vector-im/compound-design-tokens/assets/web/css/",
+        "../../node_modules/@vector-im/compound-design-tokens/assets/web/css/",
+    ];
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) {
+            return candidate;
+        }
+    }
+    return undefined;
+}
+
+const CPD_CSS_SRC = findCompoundCss();
+
+if (CPD_CSS_SRC) {
     fs.mkdirSync(CPD_CSS_DEST, { recursive: true });
     for (const file of fs.readdirSync(CPD_CSS_SRC)) {
         if (file.endsWith(".css")) {
@@ -94,5 +109,7 @@ if (fs.existsSync(CPD_CSS_SRC)) {
         }
     }
 } else {
-    console.warn("Compound Design Tokens CSS not found at " + CPD_CSS_SRC + ", skipping copy");
+    throw new Error(
+        "Compound Design Tokens CSS not found. Searched: node_modules/@vector-im/compound-design-tokens/assets/web/css/, ../node_modules/@vector-im/compound-design-tokens/assets/web/css/",
+    );
 }

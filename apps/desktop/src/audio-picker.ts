@@ -5,42 +5,29 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import { app, BrowserWindow, ipcMain, nativeTheme } from "electron";
-import { existsSync } from "node:fs";
+import { BrowserWindow, ipcMain, nativeTheme } from "electron";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { AudioSelection, VenmicListResult } from "./@types/audio-sharing.js";
 import { _t } from "./language-helper.js";
+import { tryPaths } from "./utils.js";
 import { listVenmicNodes, startVenmicDirect, startVenmicSystemDirect, stopVenmicDirect } from "./venmic.js";
 
 export type { AudioSelection } from "./@types/audio-sharing.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-/**
- * Find the audio picker HTML file path.
- * Tries multiple locations to work in both development and packaged app.
- */
-function getAudioPickerHtmlPath(): string {
-    const candidates = [
-        // Development: src -> build/audio-picker.html
-        join(__dirname, "..", "build", "audio-picker.html"),
-        // Packaged app: resources/build/audio-picker.html
-        join(app.getAppPath(), "..", "build", "audio-picker.html"),
-        // Packaged app alternative: app.asar.unpacked or similar
-        join(app.getAppPath(), "build", "audio-picker.html"),
-    ];
+let audioPickerPathPromise: Promise<string> | undefined;
 
-    for (const candidate of candidates) {
-        if (existsSync(candidate)) {
-            return candidate;
-        }
+async function getAudioPickerHtmlPath(): Promise<string> {
+    if (!audioPickerPathPromise) {
+        audioPickerPathPromise = tryPaths("audio-picker", __dirname, [
+            "../build/audio-picker.html",
+            "../../build/audio-picker.html",
+        ]);
     }
-
-    // Fallback to first candidate (will error if not found)
-    console.warn("audio-picker: could not find audio-picker.html, tried:", candidates);
-    return candidates[0];
+    return audioPickerPathPromise;
 }
 
 /**
@@ -50,26 +37,23 @@ function getAudioPickerHtmlPath(): string {
 export async function showAudioPicker(parentWindow: BrowserWindow): Promise<AudioSelection> {
     const audioSources = listVenmicNodes();
 
-    // If venmic isn't available or no PipeWire, skip the picker
     if (!audioSources.ok || !audioSources.hasPipewirePulse) {
         console.log("venmic not available or no PipeWire, skipping audio picker");
         return { type: "none" };
     }
 
-    // Detect the active Compound theme from the parent window's <body> class.
-    // element-web sets one of: cpd-theme-light, cpd-theme-dark, cpd-theme-light-hc, cpd-theme-dark-hc
+    const htmlPath = await getAudioPickerHtmlPath();
+
     let compoundTheme = "";
     try {
         const themeClass: string = await parentWindow.webContents.executeJavaScript(
             `[...document.body.classList].find(c => c.startsWith("cpd-theme-")) || ""`,
         );
-        // Strip the "cpd-theme-" prefix to get "light", "dark", "light-hc", or "dark-hc"
         compoundTheme = themeClass.replace("cpd-theme-", "");
     } catch (e) {
         console.warn("audio-picker: failed to detect theme from parent window:", e);
     }
 
-    // Fallback to system preference if detection failed or returned empty
     if (!compoundTheme) {
         compoundTheme = nativeTheme.shouldUseDarkColors ? "dark" : "light";
     }
@@ -89,7 +73,7 @@ export async function showAudioPicker(parentWindow: BrowserWindow): Promise<Audi
                 preload: join(__dirname, "audio-picker-preload.cjs"),
                 contextIsolation: true,
                 nodeIntegration: false,
-                sandbox: false, // Required for IPC to work properly
+                sandbox: false,
             },
         });
 
@@ -136,7 +120,6 @@ export async function showAudioPicker(parentWindow: BrowserWindow): Promise<Audi
             ipcMain.removeHandler("audio-picker-get-strings");
         };
 
-        // Register handlers BEFORE loading the page
         ipcMain.on("audio-picker-result", handleResult);
         ipcMain.handle("audio-picker-get-config", handleGetConfig);
         ipcMain.handle("audio-picker-get-sources", handleGetSources);
@@ -150,12 +133,11 @@ export async function showAudioPicker(parentWindow: BrowserWindow): Promise<Audi
             }
         });
 
-        // Add error handling for debugging
         pickerWindow.webContents.on("console-message", (_event, _level, message) => {
             console.log("audio-picker renderer:", message);
         });
 
-        pickerWindow.loadFile(getAudioPickerHtmlPath());
+        pickerWindow.loadFile(htmlPath);
     });
 }
 
