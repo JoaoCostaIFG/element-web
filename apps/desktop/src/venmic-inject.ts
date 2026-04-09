@@ -15,7 +15,6 @@ Please see LICENSE files in the repository root for full details.
  */
 
 import type { WebContents } from "electron";
-
 import { VENMIC_PATCH_SCRIPT } from "./venmic-patch.js";
 
 export function setupVenmicInjection(webContents: WebContents): void {
