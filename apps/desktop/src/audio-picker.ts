@@ -111,6 +111,7 @@ export async function showAudioPicker(parentWindow: BrowserWindow): Promise<Audi
             errorLoadPrefix: _t("audio_picker|error_load_prefix"),
             errorGlibc: _t("audio_picker|error_glibc"),
             errorPipewire: _t("audio_picker|error_pipewire"),
+            unknownApplication: _t("audio_picker|unknown_application"),
         });
 
         const cleanup = (): void => {

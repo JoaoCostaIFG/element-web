@@ -98,7 +98,8 @@
         "error_load_prefix": "Unable to load audio sources.",
         "error_glibc": "Your system's GLIBC version may be too old.",
         "error_pipewire": "PipeWire may not be available.",
-        "error_load_fail": "Failed to load audio sources: %(error)s"
+        "error_load_fail": "Failed to load audio sources: %(error)s",
+        "unknown_application": "Unknown Application"
     },
     "window_menu": {
         "bring_all_to_front": "Bring All to Front",
