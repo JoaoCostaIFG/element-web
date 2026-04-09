@@ -119,7 +119,14 @@ const config: Omit<Writable<Configuration>, "electronFuses"> & {
         },
         "lib/**",
     ],
-    extraResources: ["build/icon.*", "build/audio-picker.html", "build/compound/", "webapp.asar"],
+    extraResources: [
+        "build/icon.*",
+        "build/audio-picker.html",
+        "build/audio-picker.css",
+        "build/audio-picker.js",
+        "build/compound/",
+        "webapp.asar",
+    ],
     extraMetadata: {
         name: variant.name,
         productName: variant.productName,

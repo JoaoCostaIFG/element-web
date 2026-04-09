@@ -81,8 +81,6 @@ overrides:
   '@xmldom/xmldom@0.8.11': 0.8.12
   esbuild@<=0.24.2: '>=0.25.0'
   minimatch@>=10.0.0 <10.2.3: '>=10.2.3'
-  matrix-seshat: link:apps/desktop/.hak/hakModules/matrix-seshat
-  '@vencord/venmic': link:apps/desktop/.hak/hakModules/@vencord/venmic
 
 packageExtensionsChecksum: sha256-OFePh8Fn8A1ZEWgJF51vTMPT/HEVyXQyj6YGIztPb0w=
 
@@ -130,13 +128,6 @@ patchedDependencies:
 importers:
 
   .:
-    dependencies:
-      '@vencord/venmic':
-        specifier: link:apps/desktop/.hak/hakModules/@vencord/venmic
-        version: link:apps/desktop/.hak/hakModules/@vencord/venmic
-      matrix-seshat:
-        specifier: link:apps/desktop/.hak/hakModules/matrix-seshat
-        version: link:apps/desktop/.hak/hakModules/matrix-seshat
     devDependencies:
       '@action-validator/cli':
         specifier: ^0.6.0
@@ -210,6 +201,9 @@ importers:
       auto-launch:
         specifier: ^5.0.5
         version: 5.0.6
+      compound-design-tokens:
+        specifier: link:@vector-im/compound-design-tokens
+        version: link:@vector-im/compound-design-tokens
       counterpart:
         specifier: ^0.18.6
         version: 0.18.6
@@ -334,13 +328,6 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
-    optionalDependencies:
-      '@vector-im/compound-design-tokens':
-        specifier: latest
-        version: 10.1.0(@types/react@19.2.10)(react@19.2.4)
-      '@vencord/venmic':
-        specifier: link:.hak/hakModules/@vencord/venmic
-        version: link:.hak/hakModules/@vencord/venmic
 
   apps/web:
     dependencies:
@@ -478,7 +465,7 @@ importers:
         version: 1.0.3
       matrix-js-sdk:
         specifier: github:matrix-org/matrix-js-sdk#develop
-        version: https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/d02205652f23d3ea1a9433938a5e1eb5b6d74f5d
+        version: https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/9f4ab0b84008188912b2d7caa1a0075d8ab936a4
       matrix-widget-api:
         specifier: ^1.17.0
         version: 1.17.0
@@ -5751,17 +5738,6 @@ packages:
   '@upsetjs/venn.js@2.0.0':
     resolution: {integrity: sha512-WbBhLrooyePuQ1VZxrJjtLvTc4NVfpOyKx0sKqioq9bX1C1m7Jgykkn8gLrtwumBioXIqam8DLxp88Adbue6Hw==}
 
-  '@vector-im/compound-design-tokens@10.1.0':
-    resolution: {integrity: sha512-o+7DGx+NygpT2NPE1Jo//7NZDuyjzRH06eRchS0ZlkJicKx/impEmShmHU/XiE4P84BIFOo9eZ1Ws+rAym6Tuw==}
-    peerDependencies:
-      '@types/react': ^19.2.10
-      react: ^17 || ^18 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
-
   '@vector-im/compound-design-tokens@8.0.0':
     resolution: {integrity: sha512-9CffdYzNZp9A2uQ/pcVZBNZuv7fyR9Ye8e6KuimBv1TOcgegFb7F55WUCcEEqj8kRRcWcaPbbM6kkTzSpsMSmg==}
     peerDependencies:
@@ -9796,9 +9772,9 @@ packages:
   matrix-events-sdk@0.0.1:
     resolution: {integrity: sha512-1QEOsXO+bhyCroIe2/A5OwaxHvBm7EsSQ46DEDn8RBIfQwN5HWBpFvyWWR4QY0KHPPnnJdI99wgRiAl7Ad5qaA==}
 
-  matrix-js-sdk@https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/d02205652f23d3ea1a9433938a5e1eb5b6d74f5d:
-    resolution: {tarball: https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/d02205652f23d3ea1a9433938a5e1eb5b6d74f5d}
-    version: 41.2.0
+  matrix-js-sdk@https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/9f4ab0b84008188912b2d7caa1a0075d8ab936a4:
+    resolution: {tarball: https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/9f4ab0b84008188912b2d7caa1a0075d8ab936a4}
+    version: 41.3.0
     engines: {node: '>=22.0.0'}
 
   matrix-web-i18n@3.6.0:
@@ -18469,12 +18445,6 @@ snapshots:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  '@vector-im/compound-design-tokens@10.1.0(@types/react@19.2.10)(react@19.2.4)':
-    optionalDependencies:
-      '@types/react': 19.2.10
-      react: 19.2.4
-    optional: true
-
   '@vector-im/compound-design-tokens@8.0.0(@types/react@19.2.10)(react@19.2.4)':
     optionalDependencies:
       '@types/react': 19.2.10
@@ -23360,7 +23330,7 @@ snapshots:
 
   matrix-events-sdk@0.0.1: {}
 
-  matrix-js-sdk@https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/d02205652f23d3ea1a9433938a5e1eb5b6d74f5d:
+  matrix-js-sdk@https://codeload.github.com/matrix-org/matrix-js-sdk/tar.gz/9f4ab0b84008188912b2d7caa1a0075d8ab936a4:
     dependencies:
       '@babel/runtime': 7.28.6
       '@matrix-org/matrix-sdk-crypto-wasm': 18.0.0
